@@ -1,17 +1,22 @@
 import pygame
 from settings import *
+from support import *
 from pygame.locals import *
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, group, platforms) -> None:
         super().__init__(group)
         print("Player made!")
+        self.import_assets()
+        self.status = 'idle_left'
+        self.frame_index = 1
 
         self.platforms = platforms
-
-        self.surf = pygame.image.load("./assets/character/catJump.png")
-        self.facingRight = self.surf
-        self.facingLeft = pygame.transform.flip(self.surf, True, False) 
+        print("Status: " + self.status)
+        print("FrameIndex: " + str(self.frame_index))
+        self.surf = self.animations[self.status][self.frame_index]
+        # self.facingRight = self.surf
+        # self.facingLeft = pygame.transform.flip(self.surf, True, False) 
         self.rect = self.surf.get_rect(center = (WIDTH/2, HEIGHT-30))
 
         # Keeping track of the players position, velocity and acceleration vectors
@@ -32,10 +37,11 @@ class Player(pygame.sprite.Sprite):
 
         if pressed_keys[K_LEFT]:
             self.acc.x = -ACC
-            self.surf = self.facingLeft
+            self.status = 'walk_left'
         if pressed_keys[K_RIGHT]:
             self.acc.x = ACC
-            self.surf = self.facingRight
+            self.status = 'walk_right'
+        
         # Taking into account velocity and friction when accelerating
         self.acc.x += self.vel.x * FRIC
         # Adding acc onto velocity
@@ -55,6 +61,11 @@ class Player(pygame.sprite.Sprite):
     def input(self, event) -> None:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
+                if 'left' in self.status:
+                    self.status = 'jump_left'
+                else:
+                    self.status = 'jump_right'
+
                 self.jump()
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_SPACE:
@@ -93,10 +104,24 @@ class Player(pygame.sprite.Sprite):
             if self.vel.y < -3:
                 self.vel.y = -3
 
-    def update(self) -> None:
+    def animate(self, dt) -> None:
+        self.frame_index += 4 * dt
+        if self.frame_index >= len(self.animations[self.status]):
+            self.frame_index = 1
+        
+        self.surf = self.animations[self.status][int(self.frame_index)]
+    
+    def import_assets(self):
+        self.animations = {'idle_left': [], 'idle_right': [], 'jump_left': [], 'jump_right': [], 'walk_left': [], 'walk_right': []}
+        for animation in self.animations.keys():
+            full_path = '../assets/characters/' + animation
+            self.animations[animation] = import_folder(full_path)
+
+    def update(self, dt) -> None:
         # self.input()
         # self.camera_handler()
         self.collision_handler()
+        self.animate(dt)
         self.move()
         
 

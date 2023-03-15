@@ -11,7 +11,7 @@ class Game():
 		pygame.init()
 		self.display_surf = pygame.display.set_mode((WIDTH,HEIGHT))
 		pygame.display.set_caption('Platform Jump')
-		self.frames_per_sec = pygame.time.Clock()
+		self.clock = pygame.time.Clock()
 		self.level = Level()
 
 	def run(self):
@@ -26,7 +26,8 @@ class Game():
 				# Prefer to have it within Player.update()
 				self.level.P1.input(event)	
 
-			self.level.run(self.frames_per_sec)
+			dt = self.clock.tick() / 1000
+			self.level.run(dt)
 			pygame.display.update()
 
 if __name__ == '__main__':

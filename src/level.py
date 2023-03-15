@@ -86,7 +86,7 @@ class Level:
             self.displaySurf.blit(self.bg, blitPos)
             i+=1
 
-    def run(self, fps) -> None:
+    def run(self, dt) -> None:
 
         self.check_game_over()
 
@@ -100,15 +100,16 @@ class Level:
         self.back_ground_handler()
         for entity in self.all_sprites:
             self.displaySurf.blit(entity.surf, entity.rect)
-            entity.update()
+            entity.update(dt)
         
         # Displaying the score
         
         score_display = self.scoreFont.render(str(self.P1.score), False, (0,255,0))
         self.displaySurf.blit(score_display, (WIDTH/2, 50)) 
 
-        pygame.display.update()
-        fps.tick(FPS)
+        # TODO Remove
+        # pygame.display.update()
+        # fps.tick(FPS)
 
 # TODO Restructure Background into class 
 # class Background():
