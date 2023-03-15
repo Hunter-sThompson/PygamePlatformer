@@ -9,7 +9,7 @@ class Player(pygame.sprite.Sprite):
 
         self.platforms = platforms
 
-        self.surf = pygame.image.load("./assets/catJump.png")
+        self.surf = pygame.image.load("./assets/character/catJump.png")
         self.facingRight = self.surf
         self.facingLeft = pygame.transform.flip(self.surf, True, False) 
         self.rect = self.surf.get_rect(center = (WIDTH/2, HEIGHT-30))
@@ -64,7 +64,6 @@ class Player(pygame.sprite.Sprite):
         if self.rect.top <= HEIGHT / 3:
             self.pos.y += abs(self.vel.y)
             # TODO Make a scrolling background
-            # bg.surf.y += abs(P1.vel.y)
             for plat in self.platforms:
                 plat.rect.y += abs(self.vel.y)
                 if plat.rect.top >= HEIGHT:
@@ -96,8 +95,9 @@ class Player(pygame.sprite.Sprite):
 
     def update(self) -> None:
         # self.input()
-        self.camera_handler()
+        # self.camera_handler()
         self.collision_handler()
         self.move()
         
-        
+
+            

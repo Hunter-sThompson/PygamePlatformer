@@ -1,5 +1,5 @@
 import pygame
-import random
+import random, math
 import time, sys
 from settings import *
 from platform_1 import Platform
@@ -10,7 +10,9 @@ class Level:
     def __init__(self) -> None:
         # DisplaySurface
         self.displaySurf = pygame.display.get_surface()
-        self.bg = pygame.image.load("./assets/background_wooden.png") 
+        self.bg = pygame.image.load('./assets/background_wooden.png').convert()
+        self.bgRect = self.bg.get_rect()
+        self.bgRect.topleft = (100, 0)
         self.scoreFont = pygame.font.SysFont("Ariel", 18)
 
         # Sprite groups
@@ -23,11 +25,10 @@ class Level:
     # Setting Up Platforms
     def setup(self) -> None:
 
-        testPlat = Platform(self.all_sprites, self.platforms)
+        testPlat = MovingPlatform(self.all_sprites, self.platforms)
         testPlat.surf = pygame.Surface((WIDTH/6, 20))
         testPlat.surf.fill((0,0,255))
-        testPlat.rect = testPlat.surf.get_rect(center = (WIDTH/2, HEIGHT-80))
-
+        testPlat.rect = testPlat.surf.get_rect(center = (WIDTH/2, HEIGHT-80-320))
         PT1 = Platform(self.all_sprites, self.platforms)
         PT1.surf = pygame.Surface((WIDTH, 20))
         PT1.surf.fill((255,0,0))
@@ -60,7 +61,7 @@ class Level:
                 if not V:
                     p.kill() 
                     continue
-
+            
             self.platforms.add(p)
             self.all_sprites.add(p)
 
@@ -74,6 +75,16 @@ class Level:
                 time.sleep(1)
                 pygame.quit()
                 sys.exit()
+    
+    # TODO Fix background handling
+    def back_ground_handler(self) -> None:
+        tiles = math.ceil(HEIGHT / self.bg.get_height()) + 1
+
+        i = 0
+        while i < tiles:
+            blitPos = (0, self.bg.get_height()*i + abs(self.P1.vel.y))
+            self.displaySurf.blit(self.bg, blitPos)
+            i+=1
 
     def run(self, fps) -> None:
 
@@ -84,15 +95,23 @@ class Level:
         # Generate platforms
         self.generate_platform()
         # Displaying background
-        self.displaySurf.blit(self.bg, (0,0))
         # Displaying all the sprites
+        self.P1.camera_handler()
+        self.back_ground_handler()
         for entity in self.all_sprites:
             self.displaySurf.blit(entity.surf, entity.rect)
             entity.update()
         
         # Displaying the score
+        
         score_display = self.scoreFont.render(str(self.P1.score), False, (0,255,0))
         self.displaySurf.blit(score_display, (WIDTH/2, 50)) 
 
         pygame.display.update()
         fps.tick(FPS)
+
+# TODO Restructure Background into class 
+# class Background():
+#     def __init__(self) -> None:
+#         self.bgImage = pygame.image.load('./assets/background_wooden.png') 
+#         self.rectBGimg = self.bgimage.get_rect()

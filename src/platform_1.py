@@ -26,9 +26,9 @@ class Platform(pygame.sprite.Sprite):
                 continue
             # Determines how far platforms can spawn away from each other
             # TODO Works well on 100 for both, but crashes often (BECAUSE IT GENERATES )
-            if (abs(self.rect.x - platform.rect.bottom) < 100 and        # Spawn boundry Y
-                abs(self.rect.bottom - platform.rect.top) < 100):          # Spawn boundry X
-                return True
+            if (abs(self.rect.x - platform.rect.bottom) < 200 and        # Spawn boundry Y
+                abs(self.rect.bottom - platform.rect.top) < 10):          # Spawn boundry X
+                return False
         return True
         
     def update(self) -> None:
