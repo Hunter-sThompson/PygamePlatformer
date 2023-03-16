@@ -20,18 +20,21 @@ class Platform(pygame.sprite.Sprite):
             print("Colliding Platform")
             return False
 
+        # TODO, Make a requirement that one platform must be within
+        # a jump distance to the other one, (so player isnt suck)
+        closestY = 999 
         for platform in self.platforms:
-            print(platform)
             if self == platform:
                 continue
             # Determines how far platforms can spawn away from each other
-            # TODO Works well on 100 for both, but crashes often (BECAUSE IT GENERATES )
+            #Not sure how this part works, basically trying to make boundries
+            # in between each platform so they're not too close
             if (abs(self.rect.x - platform.rect.bottom) < 200 and        # Spawn boundry Y
                 abs(self.rect.bottom - platform.rect.top) < 10):          # Spawn boundry X
                 return False
         return True
         
-    def update(self) -> None:
+    def update(self,dt) -> None:
         pass
 
 class MovingPlatform(Platform):
@@ -47,5 +50,5 @@ class MovingPlatform(Platform):
             self.rect.center[0] > self.initial_pos[0] + self.move_bounds):
             self.speed = -self.speed
         self.rect.move_ip(self.speed, 0)
-    def update(self) -> None:
+    def update(self, dt) -> None:
         self.move()

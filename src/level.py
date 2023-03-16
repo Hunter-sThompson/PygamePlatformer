@@ -10,9 +10,8 @@ class Level:
     def __init__(self) -> None:
         # DisplaySurface
         self.displaySurf = pygame.display.get_surface()
-        self.bg = pygame.image.load('./assets/background_wooden.png').convert()
-        self.bgRect = self.bg.get_rect()
-        self.bgRect.topleft = (100, 0)
+
+        self.bg = Background() 
         self.scoreFont = pygame.font.SysFont("Ariel", 18)
 
         # Sprite groups
@@ -45,7 +44,7 @@ class Level:
 
     # TODO Make it so each platform generates at a max y bounry of the jump height 
     def generate_platform(self):
-        while len(self.platforms) < 6:
+        while len(self.platforms) < 9:
 
             V = False
             while not V:
@@ -75,19 +74,9 @@ class Level:
                 time.sleep(1)
                 pygame.quit()
                 sys.exit()
+
     
-    # TODO Fix background handling
-    def back_ground_handler(self) -> None:
-        tiles = math.ceil(HEIGHT / self.bg.get_height()) + 1
-
-        i = 0
-        while i < tiles:
-            blitPos = (0, self.bg.get_height()*i + abs(self.P1.vel.y))
-            self.displaySurf.blit(self.bg, blitPos)
-            i+=1
-
     def run(self, dt) -> None:
-
         self.check_game_over()
 
         # Filling up the background of the screen 
@@ -97,22 +86,42 @@ class Level:
         # Displaying background
         # Displaying all the sprites
         self.P1.camera_handler()
-        self.back_ground_handler()
+        self.bg.bg_handler(self.P1, self.displaySurf)
         for entity in self.all_sprites:
             self.displaySurf.blit(entity.surf, entity.rect)
             entity.update(dt)
         
-        # Displaying the score
         
         score_display = self.scoreFont.render(str(self.P1.score), False, (0,255,0))
         self.displaySurf.blit(score_display, (WIDTH/2, 50)) 
 
         # TODO Remove
         # pygame.display.update()
-        # fps.tick(FPS)
+        #dt.tick(FPS)
 
-# TODO Restructure Background into class 
-# class Background():
-#     def __init__(self) -> None:
-#         self.bgImage = pygame.image.load('./assets/background_wooden.png') 
-#         self.rectBGimg = self.bgimage.get_rect()
+class Background():
+    def __init__(self) -> None:
+        self.bgImage = pygame.image.load('./assets/background_wooden.png') 
+        self.rect = self.bgImage.get_rect()
+        self.scroll = 0
+    
+    def get_rect(self):
+        return self.rect
+
+    def bg_handler(self, player, display) -> None:
+        tiles = math.ceil(HEIGHT / self.bgImage.get_height())
+        if player.rect.top <= HEIGHT / 3:
+            self.scroll += abs(player.vel.y)
+
+        i = -2 
+        while i < tiles:
+            y = self.bgImage.get_height()*i + self.scroll
+            if y > HEIGHT + self.bgImage.get_height():
+                self.scroll -= self.bgImage.get_height()
+                print("Out of bounds")
+            blitPos = (0, y)
+            display.blit(self.bgImage, blitPos)
+            i += 1
+
+        
+        

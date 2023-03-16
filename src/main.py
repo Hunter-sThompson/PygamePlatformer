@@ -25,8 +25,9 @@ class Game():
 				# TODO How can I avoid running inputs here?
 				# Prefer to have it within Player.update()
 				self.level.P1.input(event)	
-
-			dt = self.clock.tick() / 1000
+			
+			# TODO something wrong with dt perhaps
+			dt = self.clock.tick(FPS) / 1000
 			self.level.run(dt)
 			pygame.display.update()
 
