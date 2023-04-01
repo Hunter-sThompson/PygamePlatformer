@@ -2,9 +2,9 @@ import pygame
 import random, math
 import time, sys
 from settings import *
-from platform_1 import Platform
-from platform_1 import MovingPlatform
+from platform_1 import Platform, MovingPlatform
 from player import Player
+from enemy import Crabby, Sharky
 
 class Level:
     def __init__(self) -> None:
@@ -17,7 +17,7 @@ class Level:
         # Sprite groups
         self.all_sprites = pygame.sprite.Group()
         self.platforms = pygame.sprite.Group()
-        self.P1 = Player(self.all_sprites, self.platforms)
+
         self.setup()
 
 
@@ -28,16 +28,29 @@ class Level:
         testPlat.surf = pygame.Surface((WIDTH/6, 20))
         testPlat.surf.fill((0,0,255))
         testPlat.rect = testPlat.surf.get_rect(center = (WIDTH/2, HEIGHT-80-320))
+
         PT1 = Platform(self.all_sprites, self.platforms)
         PT1.surf = pygame.Surface((WIDTH, 20))
         PT1.surf.fill((255,0,0))
         PT1.rect = PT1.surf.get_rect(center = (WIDTH/2, HEIGHT-10))
         PT1.point = False
 
-        self.all_sprites.add(PT1)
-        self.all_sprites.add(self.P1)
+        # might not need to add, since __init__super is called
+        # I didnt add testenemy to a group, but it still works
+        # need testing (and learning dammit)
         self.platforms.add(PT1)
         self.platforms.add(testPlat)
+
+        testEnemy = Crabby(self.all_sprites)
+        testEnemy.rect.center = (WIDTH/2, HEIGHT/2)
+
+        testSharky = Sharky(self.all_sprites)
+        testSharky.rect.center = (WIDTH/2, HEIGHT/2-100)
+
+        self.all_sprites.add(PT1)
+        
+        self.P1 = Player(self.all_sprites, self.platforms)
+        self.all_sprites.add(self.P1)
         for _ in range(8):
             self.generate_platform()
             
@@ -61,6 +74,8 @@ class Level:
                     p.kill() 
                     continue
             
+            #Shows error because i didnt make p prior to if statement
+            # still works though
             self.platforms.add(p)
             self.all_sprites.add(p)
 

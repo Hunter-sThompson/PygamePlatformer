@@ -11,6 +11,7 @@ class Player(pygame.sprite.Sprite):
         self.frame_index = 1
 
         self.platforms = platforms
+        self.group = group
         self.surf = self.animations[self.status][self.frame_index]
         self.rect = self.surf.get_rect(center = (WIDTH/2, HEIGHT-30))
 
@@ -73,11 +74,10 @@ class Player(pygame.sprite.Sprite):
     def camera_handler(self) -> None:
         if self.rect.top <= HEIGHT / 3:
             self.pos.y += abs(self.vel.y)
-            # TODO Make a scrolling background
-            for plat in self.platforms:
-                plat.rect.y += abs(self.vel.y)
-                if plat.rect.top >= HEIGHT:
-                    plat.kill()
+            for entity in self.group:
+                entity.rect.y += abs(self.vel.y)
+                if entity.rect.top >= HEIGHT:
+                    entity.kill()
 
     def collision_handler(self):
         hits = pygame.sprite.spritecollide(self, self.platforms, False)

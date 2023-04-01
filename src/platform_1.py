@@ -1,6 +1,7 @@
 import pygame
 import random
 from settings import *
+from support import import_folder
 
 class Platform(pygame.sprite.Sprite):
     def __init__(self, group, platforms) -> None:
@@ -39,11 +40,11 @@ class Platform(pygame.sprite.Sprite):
 
 class MovingPlatform(Platform):
     def __init__(self, group, platforms) -> None:
+        super().__init__(group, platforms)
         self.speed = random.choice([-5,-2,2,5])
         # Determines how far moving platforms move on x axis
         # TODO Some platforms jitter, needs to be fixed
         self.move_bounds = random.randint(50,200)
-        super().__init__(group, platforms)
 
     def move(self) -> None:
         if (self.rect.center[0] < self.initial_pos[0] - self.move_bounds or
@@ -52,3 +53,4 @@ class MovingPlatform(Platform):
         self.rect.move_ip(self.speed, 0)
     def update(self, dt) -> None:
         self.move()
+
