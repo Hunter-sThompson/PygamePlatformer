@@ -46,7 +46,7 @@ class Sharky(Enemy):
         self.import_assets()
 
         self.frame_index = 1
-        self.status = 'swim_left'
+        self.status = 'swim_right'
 
         self.surf = self.animations[self.status][self.frame_index]
         self.rect = self.surf.get_rect(center = self.initial_pos)
@@ -57,8 +57,11 @@ class Sharky(Enemy):
     def move(self) -> None:
         if (self.rect.center[0] > self.initial_pos[0] + self.move_bounds):
             self.status = 'swim_left'
+            self.speed = -self.speed
         elif (self.rect.center[0] < self.initial_pos[0] - self.move_bounds):
             self.status = 'swim_right'
+            self.speed = -self.speed
+        self.rect.move_ip(self.speed, 0)
 
     def animate(self, dt) -> None:
         self.frame_index += 4 * dt
