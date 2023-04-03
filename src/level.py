@@ -24,14 +24,8 @@ class Level:
     # Setting Up Platforms
     def setup(self) -> None:
 
-        testPlat = MovingPlatform(self.all_sprites, self.platforms)
-        testPlat.surf = pygame.Surface((WIDTH/6, 20))
-        testPlat.surf.fill((0,0,255))
-        testPlat.rect = testPlat.surf.get_rect(center = (WIDTH/2, HEIGHT-80-320))
-
         PT1 = Platform(self.all_sprites, self.platforms)
-        PT1.surf = pygame.Surface((WIDTH, 20))
-        PT1.surf.fill((255,0,0))
+        PT1.surf = pygame.transform.scale(PT1.surf, (WIDTH, 20))
         PT1.rect = PT1.surf.get_rect(center = (WIDTH/2, HEIGHT-10))
         PT1.point = False
 
@@ -39,7 +33,6 @@ class Level:
         # I didnt add testenemy to a group, but it still works
         # need testing (and learning dammit)
         self.platforms.add(PT1)
-        self.platforms.add(testPlat)
 
         testEnemy = Crabby(self.all_sprites)
         testEnemy.rect.center = (WIDTH/2, HEIGHT/2)
@@ -116,7 +109,7 @@ class Level:
 
 class Background():
     def __init__(self) -> None:
-        self.bgImage = pygame.image.load('./assets/background_wooden.png') 
+        self.bgImage = pygame.image.load('./assets/background_sea.png') 
         self.rect = self.bgImage.get_rect()
         self.scroll = 0
     
