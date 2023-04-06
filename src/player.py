@@ -4,7 +4,7 @@ from support import *
 from pygame.locals import *
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, group, platforms) -> None:
+    def __init__(self, group, platforms, enemies) -> None:
         super().__init__(group)
         self.import_assets()
         self.status = 'idle_left'
@@ -12,6 +12,8 @@ class Player(pygame.sprite.Sprite):
 
         self.platforms = platforms
         self.group = group
+        self.enemies = enemies
+
         self.surf = self.animations[self.status][self.frame_index]
         self.rect = self.surf.get_rect(center = (WIDTH/2, HEIGHT-30))
 
@@ -81,7 +83,25 @@ class Player(pygame.sprite.Sprite):
 
     def collision_handler(self):
         hits = pygame.sprite.spritecollide(self, self.platforms, False)
+        hit_enemy = pygame.sprite.spritecollide(self, self.enemies, False)
+
+        if hit_enemy:
+            if pygame.sprite.collide_rect(self, hit_enemy[0]):
+                #TODO does not register when hits someimtes
+                if self.rect.bottom > hit_enemy[0].rect.bottom:
+                    self.kill()
+                    print("You died")
+
+                if self.rect.bottom < hit_enemy[0].rect.bottom:
+                    hit_enemy[0].kill()
+                    self.vel.y = -15
+                    self.score += 1
+                    print("You killed an enemy")
+
+
         if self.vel.y > 0:
+
+
             if hits:
                 if self.pos.y < hits[0].rect.bottom:
                     if hits[0].point == True:

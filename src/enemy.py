@@ -22,7 +22,6 @@ class Crabby(Enemy):
         self.rect = self.surf.get_rect(center = (WIDTH/2, HEIGHT/2))
 
     # TODO optimize this shit. Maybe make animate a parent class method huh?
-    # need to figure out how though.. 
     def animate(self, dt) -> None:
         self.frame_index += 4 * dt
 

@@ -17,8 +17,10 @@ class Level:
         # Sprite groups
         self.all_sprites = pygame.sprite.Group()
         self.platforms = pygame.sprite.Group()
+        self.enemies = pygame.sprite.Group()
 
         self.setup()
+
 
 
     # Setting Up Platforms
@@ -40,16 +42,25 @@ class Level:
         testSharky = Sharky(self.all_sprites)
         testSharky.rect.center = (WIDTH/2, HEIGHT/2-100)
 
+        self.generate_enemy()
+
         self.all_sprites.add(PT1)
         
-        self.P1 = Player(self.all_sprites, self.platforms)
+        self.P1 = Player(self.all_sprites, self.platforms, self.enemies)
         self.all_sprites.add(self.P1)
         for _ in range(8):
-            self.generate_platform()
+            self.generate_platform(True)
             
 
+    # a function that generates enemies
+    def generate_enemy(self):
+
+        e = Crabby(self.all_sprites)
+        e.rect = e.surf.get_rect(center = (random.randrange(50, WIDTH - 50), HEIGHT-200))
+        self.all_sprites.add(e)
+        self.enemies.add(e)
     # TODO Make it so each platform generates at a max y bounry of the jump height 
-    def generate_platform(self):
+    def generate_platform(self, setup: bool = False):
         while len(self.platforms) < 9:
 
             V = False
@@ -59,9 +70,10 @@ class Level:
                     p = MovingPlatform(self.all_sprites, self.platforms)
                 else:
                     p = Platform(self.all_sprites, self.platforms)
-                #p.rect.center = (random.randrange(0, WIDTH - width),
-                #                random.randrange(-50, 0))
 
+                if setup:
+                    print("Setup")
+                    p.initial_pos = (random.randint(0, WIDTH-10), random.randint(0, HEIGHT-10))
                 V = p.valid_platform()
                 if not V:
                     p.kill() 
@@ -71,6 +83,7 @@ class Level:
             # still works though
             self.platforms.add(p)
             self.all_sprites.add(p)
+            print("Platform Generated at location: ", p.rect.center)
 
     def check_game_over(self) -> None:
         if self.P1.rect.top > HEIGHT:
