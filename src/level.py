@@ -19,6 +19,9 @@ class Level:
         self.platforms = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
 
+        # Counter
+        self.generated_platforms = 0
+
         self.setup()
 
 
@@ -42,7 +45,7 @@ class Level:
         testSharky = Sharky(self.all_sprites)
         testSharky.rect.center = (WIDTH/2, HEIGHT/2-100)
 
-        self.generate_enemy()
+        self.generate_crab()
 
         self.all_sprites.add(PT1)
         
@@ -53,34 +56,43 @@ class Level:
             
 
     # a function that generates enemies
-    def generate_enemy(self):
+    def generate_crab(self):
 
         e = Crabby(self.all_sprites)
-        e.rect = e.surf.get_rect(center = (random.randrange(50, WIDTH - 50), HEIGHT-200))
+
+        if self.generated_platforms % 9 == 0:
+            latest_platform = self.platforms.sprites()[-1]
+            spawn_point = latest_platform.initial_pos
+            e.rect = e.surf.get_rect(center = (spawn_point[0], (spawn_point[1]-20)))
         self.all_sprites.add(e)
         self.enemies.add(e)
     # TODO Make it so each platform generates at a max y bounry of the jump height 
     def generate_platform(self, setup: bool = False):
-        while len(self.platforms) < 9:
+        while len(self.platforms) < 7:
 
+            if random.random() <= MOVE_CHANCE:
+                p = MovingPlatform(self.all_sprites, self.platforms)
+            else:
+                p = Platform(self.all_sprites, self.platforms)
+            
+            attempts = 0
             V = False
-            while not V:
-                
-                if random.random() <= MOVE_CHANCE:
-                    p = MovingPlatform(self.all_sprites, self.platforms)
-                else:
-                    p = Platform(self.all_sprites, self.platforms)
+            while not V and attempts <  100:
 
                 if setup:
                     print("Setup")
                     p.initial_pos = (random.randint(0, WIDTH-10), random.randint(0, HEIGHT-10))
+                else:
+                    p.initial_pos = (random.randint(0, WIDTH-10), random.randint(-100, HEIGHT-10))
+
                 V = p.valid_platform()
-                if not V:
-                    p.kill() 
-                    continue
+                attempts += 1
+
+            if not V:
+                print("Failed to generate platform after ", attempts, " attempts")
+                continue
             
-            #Shows error because i didnt make p prior to if statement
-            # still works though
+            self.generated_platforms += 1
             self.platforms.add(p)
             self.all_sprites.add(p)
             print("Platform Generated at location: ", p.rect.center)

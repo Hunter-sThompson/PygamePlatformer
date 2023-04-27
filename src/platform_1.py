@@ -8,7 +8,8 @@ class Platform(pygame.sprite.Sprite):
         self.all_sprites = group
         self.platforms = platforms
         self.surf = pygame.image.load("./assets/platform_sea.png")
-        self.initial_pos = (random.randint(0, WIDTH-10), random.randint(-HEIGHT, 0))
+        #self.initial_pos = (random.randint(0, WIDTH-10), random.randint(-HEIGHT, 0))
+        self.initial_pos = (random.randint(0, WIDTH-10), random.randint(0, HEIGHT-10))
         self.rect = self.surf.get_rect(center = self.initial_pos)
         self.point = True
     
